@@ -1,3 +1,8 @@
+export enum TaskSortBy {
+  DESCRIPTION = "description",
+  TITLE = "title",
+}
+
 export enum TaskStatus {
   PENDING = "pending",
   IN_PROGRESS = "in_progress",
