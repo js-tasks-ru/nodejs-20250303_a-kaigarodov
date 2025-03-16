@@ -1,7 +1,7 @@
 import { HttpStatus, ParseIntPipe, ParseIntPipeOptions } from "@nestjs/common";
 import { HttpErrorByCode } from "@nestjs/common/utils/http-error-by-code.util";
 
-interface ParseIntWPipeOptions extends ParseIntPipeOptions {
+interface ParseIntWithRangePipeOptions extends ParseIntPipeOptions {
   min?: number;
   max?: number;
   fieldName?: string;
@@ -12,7 +12,7 @@ export class ParseIntWithRangePipe extends ParseIntPipe {
   private readonly min?: number;
   private readonly max?: number;
 
-  constructor(options?: ParseIntWPipeOptions) {
+  constructor(options?: ParseIntWithRangePipeOptions) {
     super(options);
     this.min = options.min;
     this.max = options.max;
