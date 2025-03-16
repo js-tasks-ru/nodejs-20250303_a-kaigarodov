@@ -24,7 +24,7 @@ export class ParseIntWithRangePipe extends ParseIntPipe {
       this.fieldName !== undefined ? ` Field: '${this.fieldName}'` : "";
     const min = this.min !== undefined ? ` >= ${this.min}` : "";
     const max = this.max !== undefined ? ` <= ${this.max}` : "";
-    const and = this.max !== undefined && this.max !== undefined ? " and" : "";
+    const and = this.max !== undefined && this.min !== undefined ? " and" : "";
 
     const message = `Validation failed (numeric string is expected).${field}${max}${and}${min}`;
 
