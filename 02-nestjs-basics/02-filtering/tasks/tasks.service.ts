@@ -40,5 +40,25 @@ export class TasksService {
     status?: TaskStatus,
     page?: number,
     limit?: number,
-  ): Task[] {}
+    sortBy?: keyof Pick<Task, "description" | "title">,
+  ): Task[] {
+    let tasks = [...this.tasks];
+
+    if (status) {
+      tasks = tasks.filter((task) => task.status === status);
+    }
+
+    if (sortBy) {
+      tasks.sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
+    }
+
+    return this.getTasksByPage(tasks, page, limit);
+  }
+
+  getTasksByPage(task: Task[], page: number, limit?: number) {
+    const from = (page - 1) * (limit ?? 0);
+    const to = limit !== undefined ? limit + from : limit;
+
+    return task.slice(from, to);
+  }
 }
