@@ -4,11 +4,16 @@ import { Request, Response, NextFunction } from "express";
 export class LoggingMiddleware implements NestMiddleware {
   private readonly logger = new Logger();
 
-  use(req: Request, _: Response, next: NextFunction) {
-    const { method, originalUrl, hostname, protocol } = req;
-    const message = `Request ${protocol}://${hostname}${originalUrl} ${method}`;
+  use(req: Request, res: Response, next: NextFunction) {
+    const startAt = new Date().getTime();
 
-    this.logger.log(message);
+    res.once("finish", () => {
+      const { method, originalUrl } = req;
+      const duration = new Date().getTime() - startAt;
+      const message = `[${method}] ${originalUrl} ${duration}ms`;
+
+      this.logger.log(message);
+    });
 
     next();
   }
