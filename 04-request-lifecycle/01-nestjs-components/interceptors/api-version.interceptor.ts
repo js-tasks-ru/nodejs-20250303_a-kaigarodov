@@ -1,5 +1,22 @@
-import { NestInterceptor, ExecutionContext, CallHandler } from "@nestjs/common";
+import {
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Injectable,
+} from "@nestjs/common";
+import { map } from "rxjs";
 
+@Injectable()
 export class ApiVersionInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler) {}
+  intercept(_: ExecutionContext, next: CallHandler) {
+    const startTimestamp = new Date().getTime();
+
+    return next.handle().pipe(
+      map((data) => ({
+        ...data,
+        apiVersion: "1.0",
+        executionTime: new Date().getTime() - startTimestamp,
+      })),
+    );
+  }
 }
