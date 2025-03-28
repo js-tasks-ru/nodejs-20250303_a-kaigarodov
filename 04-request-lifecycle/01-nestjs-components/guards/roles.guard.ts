@@ -9,9 +9,8 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const role = request.headers["x-role"];
 
-    if (role !== "admin") {
-      throw new ForbiddenException();
-    }
+    if (role !== "admin")
+      throw new ForbiddenException("Доступ запрещён: требуется роль admin");
 
     return true;
   }

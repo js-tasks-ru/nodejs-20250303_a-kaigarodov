@@ -7,15 +7,12 @@ import {
   Patch,
   Post,
   UseGuards,
-  UseInterceptors,
 } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { CreateTaskDto, UpdateTaskDto } from "./task.model";
 import { ParseIntPipe } from "../pipes/parse-int.pipe";
 import { RolesGuard } from "../guards/roles.guard";
-import { ApiVersionInterceptor } from "interceptors/api-version.interceptor";
 
-@UseInterceptors(ApiVersionInterceptor)
 @Controller("tasks")
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
