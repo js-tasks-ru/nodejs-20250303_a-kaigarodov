@@ -4,8 +4,6 @@ import { IsString, IsNotEmpty, IsBoolean, IsOptional } from "class-validator";
 @Entity()
 export class Task {
   @PrimaryGeneratedColumn()
-  @IsString()
-  @IsNotEmpty()
   id: number;
 
   @Column()

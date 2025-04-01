@@ -17,10 +17,11 @@ export class TasksService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
-    const result = await this.taskRepository.insert(createTaskDto);
-    const [{ id }] = result.identifiers;
+    const task = await this.taskRepository.create(createTaskDto);
 
-    return { id, ...createTaskDto };
+    await this.taskRepository.save(task);
+
+    return task;
   }
 
   async findAll() {
@@ -48,6 +49,6 @@ export class TasksService {
     const result = await this.taskRepository.delete(id);
 
     if (!result.affected)
-      throw new HttpException("Resource already deleted", HttpStatus.NOT_FOUND);
+      throw new NotFoundException("Resource already deleted");
   }
 }
