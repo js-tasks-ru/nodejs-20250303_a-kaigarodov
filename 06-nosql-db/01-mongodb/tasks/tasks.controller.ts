@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { ObjectId } from "mongoose";
 import { ObjectIDPipe } from "../objectid/objectid.pipe";
+import { TasksFindAllQueryDto } from "./dto/tasks-find-all-query.dto";
 
 @Controller("tasks")
 export class TasksController {
@@ -23,8 +25,8 @@ export class TasksController {
   }
 
   @Get()
-  findAll() {
-    return this.tasksService.findAll();
+  findAll(@Query() param: TasksFindAllQueryDto) {
+    return this.tasksService.findAll(param);
   }
 
   @Get(":id")

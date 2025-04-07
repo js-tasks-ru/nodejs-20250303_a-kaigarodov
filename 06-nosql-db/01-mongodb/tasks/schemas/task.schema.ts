@@ -1,7 +1,8 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
+import { User } from "users/schemas/user.schemas";
 
 export type TaskDocument = HydratedDocument<Task>;
 
@@ -21,6 +22,9 @@ export class Task {
   @IsOptional()
   @IsBoolean()
   isCompleted: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  holder: User;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
