@@ -2,7 +2,7 @@ import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 import mongoose, { HydratedDocument } from "mongoose";
-import { User } from "users/schemas/user.schemas";
+import { User } from "../../users/schemas/user.schemas";
 
 export type TaskDocument = HydratedDocument<Task>;
 
