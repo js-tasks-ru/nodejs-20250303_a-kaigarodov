@@ -3,21 +3,29 @@ import { CreateTaskDto } from "./dto/create-task.dto";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Task } from "./schemas/task.schema";
-import { Model, ObjectId } from "mongoose";
-import { User } from "../users/schemas/user.schemas";
+import { Model, ObjectId, RootFilterQuery, UpdateQuery } from "mongoose";
 import { TasksFindAllQueryDto } from "./dto/tasks-find-all-query.dto";
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class TasksService {
   constructor(
     @InjectModel(Task.name) private TaskModel: Model<Task>,
-    @InjectModel(User.name) private UserModel: Model<User>,
+    private usersService: UsersService,
   ) {}
 
   async create(createTaskDto: CreateTaskDto) {
     const { holderLogin, ...initialData } = createTaskDto;
 
-    const holder = await this.extractUserByLogin(holderLogin);
+    const holder = holderLogin
+      ? await this.usersService.extractUserByLogin(holderLogin)
+      : undefined;
+
+    if (typeof holderLogin === "string" && !holder) {
+      throw new NotFoundException(
+        `user with login:${holderLogin} is not exist`,
+      );
+    }
 
     const task = new this.TaskModel({
       ...initialData,
@@ -28,9 +36,21 @@ export class TasksService {
   }
 
   async findAll({ holderLogin }: TasksFindAllQueryDto) {
-    const holder = await this.extractUserByLogin(holderLogin);
+    const query: RootFilterQuery<Task> = {};
 
-    return this.TaskModel.find({ holder }).exec();
+    const holder = holderLogin
+      ? await this.usersService.extractUserByLogin(holderLogin)
+      : undefined;
+
+    if (holder) {
+      query.holder = holder;
+    } else if (typeof holderLogin === "string") {
+      throw new NotFoundException(
+        `user with login:${holderLogin} is not exist`,
+      );
+    }
+
+    return this.TaskModel.find(query).exec();
   }
 
   async findOne(id: ObjectId) {
@@ -44,8 +64,26 @@ export class TasksService {
   }
 
   async update(id: ObjectId, { holderLogin, ...dto }: UpdateTaskDto) {
-    const holder = await this.extractUserByLogin(holderLogin);
-    const updateData = { ...dto, holder };
+    const holder = holderLogin
+      ? await this.usersService.extractUserByLogin(holderLogin)
+      : undefined;
+
+    if (typeof holderLogin === "string" && !holder) {
+      throw new NotFoundException(
+        `user with login:${holderLogin} is not exist`,
+      );
+    }
+
+    const unset: UpdateQuery<Task>["$unset"] = {};
+    if (holderLogin === null) {
+      unset.holder = "";
+    }
+
+    const updateData: UpdateQuery<Task> = {
+      ...dto,
+      holder,
+      $unset: unset,
+    };
 
     const task = await this.TaskModel.findByIdAndUpdate(id, updateData, {
       new: true,
@@ -64,17 +102,5 @@ export class TasksService {
     if (!result) {
       throw new NotFoundException();
     }
-  }
-
-  private async extractUserByLogin(login?: string) {
-    if (login === undefined) return;
-
-    const holder = await this.UserModel.findOne({ login }).exec();
-
-    if (!holder) {
-      throw new NotFoundException(`user with login:${login} is not exist`);
-    }
-
-    return holder;
   }
 }

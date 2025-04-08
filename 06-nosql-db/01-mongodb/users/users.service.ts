@@ -18,4 +18,10 @@ export class UsersService {
   findAll() {
     return this.userModel.find().exec();
   }
+
+  async extractUserByLogin(login?: string) {
+    if (!login) return;
+
+    return this.userModel.findOne({ login }).exec();
+  }
 }
