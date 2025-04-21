@@ -1,8 +1,9 @@
 import { Expose } from "class-transformer";
-import { IsOptional, IsString } from "class-validator";
+import { IsOptional } from "class-validator";
+import { IsNotEmptyString } from "../../utils/is-not-empty-string";
 
 export class TasksFindAllQueryDto {
-  @IsString()
+  @IsNotEmptyString()
   @IsOptional()
   @Expose({ name: "holder-login" })
   holderLogin: string;

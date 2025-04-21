@@ -1,9 +1,9 @@
+import { IsNotEmptyString } from "../../utils/is-not-empty-string";
 import { IUser } from "../models/user.model";
 import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateUserDto implements IUser {
-  @IsNotEmpty()
-  @IsString()
+  @IsNotEmptyString()
   login: string;
 
   @IsString()

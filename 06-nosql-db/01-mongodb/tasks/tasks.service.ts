@@ -18,14 +18,8 @@ export class TasksService {
     const { holderLogin, ...initialData } = createTaskDto;
 
     const holder = holderLogin
-      ? await this.usersService.extractUserByLogin(holderLogin)
+      ? await this.usersService.findByLogin(holderLogin)
       : undefined;
-
-    if (typeof holderLogin === "string" && !holder) {
-      throw new NotFoundException(
-        `user with login:${holderLogin} is not exist`,
-      );
-    }
 
     const task = new this.TaskModel({
       ...initialData,
@@ -39,22 +33,18 @@ export class TasksService {
     const query: RootFilterQuery<Task> = {};
 
     const holder = holderLogin
-      ? await this.usersService.extractUserByLogin(holderLogin)
+      ? await this.usersService.findByLogin(holderLogin)
       : undefined;
 
     if (holder) {
       query.holder = holder;
-    } else if (typeof holderLogin === "string") {
-      throw new NotFoundException(
-        `user with login:${holderLogin} is not exist`,
-      );
     }
 
-    return this.TaskModel.find(query).exec();
+    return this.TaskModel.find(query).populate("holder").exec();
   }
 
   async findOne(id: ObjectId) {
-    const task = await this.TaskModel.findById(id);
+    const task = await this.TaskModel.findById(id).populate("holder");
 
     if (!task) {
       throw new NotFoundException();
@@ -65,14 +55,8 @@ export class TasksService {
 
   async update(id: ObjectId, { holderLogin, ...dto }: UpdateTaskDto) {
     const holder = holderLogin
-      ? await this.usersService.extractUserByLogin(holderLogin)
+      ? await this.usersService.findByLogin(holderLogin)
       : undefined;
-
-    if (typeof holderLogin === "string" && !holder) {
-      throw new NotFoundException(
-        `user with login:${holderLogin} is not exist`,
-      );
-    }
 
     const unset: UpdateQuery<Task>["$unset"] = {};
     if (holderLogin === null) {

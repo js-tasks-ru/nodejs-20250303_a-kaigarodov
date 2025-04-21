@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsNotEmptyString } from "../../utils/is-not-empty-string";
 
 export class CreateTaskDto {
   @IsString()
@@ -10,6 +11,6 @@ export class CreateTaskDto {
   description: string;
 
   @IsOptional()
-  @IsString()
+  @IsNotEmptyString()
   holderLogin: string;
 }
