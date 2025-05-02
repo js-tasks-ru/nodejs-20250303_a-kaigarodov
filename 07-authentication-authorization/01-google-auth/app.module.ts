@@ -3,9 +3,17 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
 import { AppController } from "./app.controller";
+import { APP_GUARD } from "@nestjs/core";
+import { JwtGuard } from "./auth/jwt.guard";
+import { ConfigModule } from "@nestjs/config";
 
+import authConfig from "./configs/auth.config";
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: [".env.local"],
+      load: [authConfig],
+    }),
     TypeOrmModule.forRoot({
       type: "sqlite",
       database: ":memory:",
@@ -16,6 +24,11 @@ import { AppController } from "./app.controller";
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+  ],
 })
 export class AppModule {}

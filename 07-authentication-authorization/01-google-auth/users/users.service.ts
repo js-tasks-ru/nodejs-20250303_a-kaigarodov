@@ -14,10 +14,8 @@ export class UsersService {
   }
 
   create(payload: Partial<User>) {
-    const user = new User();
-    user.id = payload.id;
-    user.displayName = payload.displayName;
-    user.avatar = payload.avatar;
+    const user = this.userRepository.create(payload);
+
     return this.userRepository.save(user);
   }
 }

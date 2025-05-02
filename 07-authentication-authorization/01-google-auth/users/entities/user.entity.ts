@@ -2,12 +2,15 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryColumn({ unique: true })
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   displayName: string;
 
-  @Column()
+  @Column({ nullable: true })
   avatar: string;
+
+  @Column({ nullable: true })
+  password: string;
 }
